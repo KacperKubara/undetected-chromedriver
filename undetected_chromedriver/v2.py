@@ -294,9 +294,10 @@ class Chrome(selenium.webdriver.chrome.webdriver.WebDriver):
 
         print(options.arguments)
         options_cp = options
-        for arg in options_cp:
+        for arg in options_cp.arguments:
             if "data_dir" in arg:
                 options_cp.remove(arg)
+              
         self.browser = subprocess.Popen(
             [options.binary_location, *options.arguments],
             stdin=subprocess.PIPE,
