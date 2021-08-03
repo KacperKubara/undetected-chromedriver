@@ -292,7 +292,7 @@ class Chrome(selenium.webdriver.chrome.webdriver.WebDriver):
         if not desired_capabilities:
             desired_capabilities = options.to_capabilities()
 
-
+        print(options.arguments)
         self.browser = subprocess.Popen(
             [options.binary_location, *options.arguments],
             stdin=subprocess.PIPE,
