@@ -12,6 +12,7 @@ import subprocess
 import sys
 import tempfile
 import time
+from copy import deepcopy
 
 import selenium.webdriver.chrome.service
 import selenium.webdriver.chrome.webdriver
@@ -189,7 +190,7 @@ class Chrome(selenium.webdriver.chrome.webdriver.WebDriver):
 
         options.add_argument("--remote-debugging-host=%s" % debug_host)
         options.add_argument("--remote-debugging-port=%s" % debug_port)
-
+        options_cp = deepcopy(options)
         user_data_dir, language, keep_user_data_dir = None, None, None
 
         # see if a custom user profile is specified
@@ -248,10 +249,12 @@ class Chrome(selenium.webdriver.chrome.webdriver.WebDriver):
                 language = "en-US"
 
         options.add_argument("--lang=%s" % language)
+        options_cp.add_argument("--lang=%s" % language)
 
         if not options.binary_location:
             options.binary_location = find_chrome_executable()
-
+            options_cp.add_argument("--lang=%s" % language)
+            
         self._delay = delay
 
         self.user_data_dir = user_data_dir
@@ -269,7 +272,10 @@ class Chrome(selenium.webdriver.chrome.webdriver.WebDriver):
             "--log-level=%d" % log_level
             or divmod(logging.getLogger().getEffectiveLevel(), 10)[0]
         )
-
+        options_cp.add_argument(
+            "--log-level=%d" % log_level
+            or divmod(logging.getLogger().getEffectiveLevel(), 10)[0]
+        )
         # fix exit_type flag to prevent tab-restore nag
         try:
             with open(
@@ -292,11 +298,8 @@ class Chrome(selenium.webdriver.chrome.webdriver.WebDriver):
         if not desired_capabilities:
             desired_capabilities = options.to_capabilities()
 
-        print(options.arguments)
-        options_cp = options
-        for arg in options_cp.arguments:
-            if "data_dir" in arg:
-                options_cp.remove(arg)
+        print(options_cp.arguments)
+       
               
         self.browser = subprocess.Popen(
             [options.binary_location, *options.arguments],
@@ -309,9 +312,9 @@ class Chrome(selenium.webdriver.chrome.webdriver.WebDriver):
         super(Chrome, self).__init__(
             executable_path=patcher.executable_path,
             port=port,
-            options=options,
+            options=options_cp,
             service_args=service_args,
-            desired_capabilities=desired_capabilities,
+            desired_capabilities=options_cp.to_capabilities(),
             service_log_path=service_log_path,
             keep_alive=keep_alive,
         )
