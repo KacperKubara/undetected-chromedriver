@@ -181,8 +181,8 @@ class Chrome(selenium.webdriver.chrome.webdriver.WebDriver):
         debug_host = "127.0.0.1"
         print(debug_port)
         print("KURWA")
-        if not options.debugger_address:
-            options.debugger_address = "%s:%d" % (debug_host, debug_port)
+        #if not options.debugger_address:
+        #    options.debugger_address = "%s:%d" % (debug_host, debug_port)
 
         if enable_cdp_events:
             options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
