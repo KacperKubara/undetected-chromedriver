@@ -194,26 +194,26 @@ class Chrome(selenium.webdriver.chrome.webdriver.WebDriver):
 
         # see if a custom user profile is specified
         for arg in options.arguments:
-
+            print(arg)
             if "lang" in arg:
                 m = re.search("(?:--)?lang(?:[ =])?(.*)", arg)
                 try:
                     language = m[1]
                 except IndexError:
-                    logger.debug("will set the language to en-US,en;q=0.9")
+                    print("will set the language to en-US,en;q=0.9")
                     language = "en-US,en;q=0.9"
 
             if "user-data-dir" in arg:
                 m = re.search("(?:--)?user-data-dir(?:[ =])?(.*)", arg)
                 try:
                     user_data_dir = m[1]
-                    logger.debug(
+                    print(
                         "user-data-dir found in user argument %s => %s" % (arg, m[1])
                     )
                     keep_user_data_dir = True
 
                 except IndexError:
-                    logger.debug(
+                    print(
                         "no user data dir could be extracted from supplied argument %s "
                         % arg
                     )
@@ -223,7 +223,7 @@ class Chrome(selenium.webdriver.chrome.webdriver.WebDriver):
             if options.user_data_dir:
                 options.add_argument("--user-data-dir=%s" % options.user_data_dir)
                 keep_user_data_dir = True
-                logger.debug(
+                print(
                     "user_data_dir property found in options object: %s" % user_data_dir
                 )
 
@@ -232,7 +232,7 @@ class Chrome(selenium.webdriver.chrome.webdriver.WebDriver):
                 keep_user_data_dir = False
                 arg = "--user-data-dir=%s" % user_data_dir
                 options.add_argument(arg)
-                logger.debug(
+                print(
                     "created a temporary folder in which the user-data (profile) will be stored during this\n"
                     "session, and added it to chrome startup arguments: %s" % arg
                 )
@@ -283,9 +283,9 @@ class Chrome(selenium.webdriver.chrome.webdriver.WebDriver):
                     config["profile"]["exit_type"] = None
                 fs.seek(0, 0)
                 json.dump(config, fs)
-                logger.debug("fixed exit_type flag")
+                print("fixed exit_type flag")
         except Exception as e:
-            logger.debug("did not find a bad exit_type flag ")
+            print("did not find a bad exit_type flag ")
 
         self.options = options
 
@@ -561,17 +561,17 @@ class Chrome(selenium.webdriver.chrome.webdriver.WebDriver):
         try:
             self.service.stop()
         except Exception as e:
-            logger.debug(e)
+            print(e)
         time.sleep(timeout)
         try:
             self.service.start()
         except Exception as e:
-            logger.debug(e)
+            print(e)
 
         try:
             self.start_session()
         except Exception as e:
-            logger.debug(e)
+            print(e)
 
     def start_session(self, capabilities=None, browser_profile=None):
         if not capabilities:
@@ -580,7 +580,7 @@ class Chrome(selenium.webdriver.chrome.webdriver.WebDriver):
 
 
     def quit(self):
-        logger.debug("closing webdriver")
+        print("closing webdriver")
         self.service.process.kill()
         try:
             if self.reactor and isinstance(self.reactor, Reactor):
@@ -588,12 +588,12 @@ class Chrome(selenium.webdriver.chrome.webdriver.WebDriver):
         except Exception:  # noqa
             pass
         try:
-            logger.debug("killing browser")
+            print("killing browser")
             self.browser.terminate()
             self.browser.wait(1)
 
         except TimeoutError as e:
-            logger.debug(e, exc_info=True)
+            print(e, exc_info=True)
         except Exception:  # noqa
             pass
 
@@ -604,16 +604,16 @@ class Chrome(selenium.webdriver.chrome.webdriver.WebDriver):
         ):
             for _ in range(5):
                 try:
-                    logger.debug("removing profile : %s" % self.user_data_dir)
+                    print("removing profile : %s" % self.user_data_dir)
                     shutil.rmtree(self.user_data_dir, ignore_errors=False)
                 except FileNotFoundError:
                     pass
                 except PermissionError:
-                    logger.debug(
+                    print(
                         "permission error. files are still in use/locked. retying..."
                     )
                 except (RuntimeError, OSError) as e:
-                    logger.debug("%s retying..." % e)
+                    print("%s retying..." % e)
                 else:
                     break
                 time.sleep(0.1)
