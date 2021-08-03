@@ -32,8 +32,8 @@ __all__ = (
     "find_chrome_executable",
 )
 
+logging.basicConfig(level = logging.INFO)
 logger = logging.getLogger("uc")
-logger.setLevel(logging.getLogger().getEffectiveLevel())
 
 
 class Chrome(selenium.webdriver.chrome.webdriver.WebDriver):
@@ -187,8 +187,8 @@ class Chrome(selenium.webdriver.chrome.webdriver.WebDriver):
         if enable_cdp_events:
             options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
 
-        options.add_argument("--remote-debugging-host=%s" % debug_host)
-        options.add_argument("--remote-debugging-port=%s" % debug_port)
+        #options.add_argument("--remote-debugging-host=%s" % debug_host)
+        #options.add_argument("--remote-debugging-port=%s" % debug_port)
 
         user_data_dir, language, keep_user_data_dir = None, None, None
 
